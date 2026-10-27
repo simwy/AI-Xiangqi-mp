@@ -1,0 +1,7 @@
+{
+  "name": "xiangqi-store",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": { "xiangqi-config": "file:../common/xiangqi-config" },
+  "cloudfunction-config": { "memorySize": 256, "timeout": 60, "path": "/xiangqi-store" }
+}

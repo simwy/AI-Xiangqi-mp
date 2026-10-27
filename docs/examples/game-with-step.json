@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "title": "含一步中炮的归档示例",
+  "type": "standard",
+  "status": "paused",
+  "version": 1,
+  "players": {
+    "red": {
+      "model_id": "doubao",
+      "display_name": "豆包"
+    },
+    "black": {
+      "model_id": "deepseek",
+      "display_name": "DeepSeek"
+    }
+  },
+  "initial_position": {
+    "fen": "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1",
+    "side_to_move": "red"
+  },
+  "current_fen": "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C4/9/RNBAKABNR b - - 1 1",
+  "ply_count": 1,
+  "last_event_seq": 3,
+  "steps": [
+    {
+      "seq": 1,
+      "side": "red",
+      "move": {
+        "piece_id": "red-cannon-right",
+        "from": [
+          7,
+          7
+        ],
+        "to": [
+          4,
+          7
+        ]
+      },
+      "notation": "炮二平五",
+      "fen_before": "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1",
+      "fen_after": "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C4/9/RNBAKABNR b - - 1 1",
+      "committed_at": 1793062812500,
+      "decision_ms": 12500,
+      "validation_ms": 2,
+      "calls": [
+        {
+          "id": "call-move-1-1",
+          "purpose": "move",
+          "attempt": 1,
+          "model_id": "doubao",
+          "model_revision": 1,
+          "thinking_mode": "default",
+          "started_at": 1793062800000,
+          "finished_at": 1793062812500,
+          "duration_ms": 12500,
+          "status": "succeeded"
+        }
+      ],
+      "commentaries": [
+        {
+          "id": "commentary-move-1",
+          "type": "move",
+          "revision": 1,
+          "text": "红方架起中炮，争夺中路。",
+          "status": "ready",
+          "created_at": 1793062812500,
+          "is_fallback": true,
+          "selected_for_live": true,
+          "audio": [
+            {
+              "id": "audio-move-1-v1",
+              "status": "pending"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "id": "event-1",
+          "seq": 1,
+          "type": "thinking_started",
+          "offset_ms": 0,
+          "occurred_at": 1793062800000,
+          "step_seq": 1,
+          "data": {
+            "model_id": "doubao"
+          }
+        },
+        {
+          "id": "event-2",
+          "seq": 2,
+          "type": "move",
+          "offset_ms": 12500,
+          "occurred_at": 1793062812500,
+          "step_seq": 1,
+          "data": {
+            "notation": "炮二平五"
+          }
+        },
+        {
+          "id": "event-3",
+          "seq": 3,
+          "type": "commentary",
+          "offset_ms": 13600,
+          "occurred_at": 1793062812500,
+          "step_seq": 1,
+          "data": {
+            "commentary_id": "commentary-move-1"
+          }
+        }
+      ],
+      "outcome": {
+        "check": false
+      }
+    }
+  ],
+  "calls": [],
+  "commentaries": [],
+  "events": [],
+  "result": {},
+  "source": {
+    "kind": "new"
+  },
+  "archive": {
+    "mode": "inline"
+  },
+  "created_at": 1793062800000,
+  "started_at": 1793062800000,
+  "updated_at": 1793062812500
+}

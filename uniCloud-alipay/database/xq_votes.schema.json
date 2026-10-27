@@ -1,0 +1,29 @@
+{
+  "bsonType": "object",
+  "description": "运行辅助集合；不是拆分后的棋局档案表",
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false,
+    "count": false
+  },
+  "properties": {
+    "_id": {
+      "bsonType": "string"
+    },
+    "round_id": {
+      "bsonType": "string",
+      "description": "投票所属当前局"
+    },
+    "model_id": {
+      "bsonType": "string",
+      "description": "被投模型"
+    },
+    "created_at": {
+      "bsonType": "timestamp",
+      "description": "投票时间；_id 是局号和会话哈希的摘要"
+    }
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,49 @@
+{
+  "bsonType": "object",
+  "description": "运行辅助集合；不是拆分后的棋局档案表",
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false,
+    "count": false
+  },
+  "properties": {
+    "_id": {
+      "bsonType": "string"
+    },
+    "version": {
+      "bsonType": "int",
+      "description": "内部并发版本"
+    },
+    "owner": {
+      "bsonType": "string",
+      "description": "当前调度实例"
+    },
+    "fence": {
+      "bsonType": "int",
+      "description": "租约栅栏号"
+    },
+    "lease_until": {
+      "bsonType": "timestamp",
+      "description": "租约截止 UTC 毫秒"
+    },
+    "current_game_id": {
+      "bsonType": "string",
+      "description": "当前局"
+    },
+    "queued_game_id": {
+      "bsonType": "string",
+      "description": "下一局草稿"
+    },
+    "round_open": {
+      "bsonType": "bool",
+      "description": "下局投票开放状态"
+    },
+    "vote_counts": {
+      "bsonType": "object",
+      "description": "当前轮投票汇总，在去重事务中更新，开新局时清空"
+    }
+  },
+  "version": "1.0.0"
+}

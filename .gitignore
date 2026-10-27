@@ -8,3 +8,7 @@ dist/
 .env
 .env.*
 !.env.example
+server/data/
+coverage/
+uni_modules/uni-config-center/uniCloud/cloudfunctions/common/uni-config-center/xiangqi/config.json
+uniCloud-alipay/cloudfunctions/common/xiangqi-config/config.json

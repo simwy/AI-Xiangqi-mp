@@ -1,0 +1,13 @@
+services:
+  xiangqi:
+    build: .
+    restart: unless-stopped
+    env_file: server/.env
+    environment:
+      HOST: 0.0.0.0
+    ports:
+      - "127.0.0.1:8787:8787"
+    volumes:
+      - xiangqi-cache:/app/server/data
+volumes:
+  xiangqi-cache:

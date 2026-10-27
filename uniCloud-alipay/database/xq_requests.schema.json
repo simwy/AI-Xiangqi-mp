@@ -1,0 +1,21 @@
+{
+  "bsonType": "object",
+  "description": "运行辅助集合；不是拆分后的棋局档案表",
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false,
+    "count": false
+  },
+  "properties": {
+    "_id": {
+      "bsonType": "string"
+    },
+    "expires_at": {
+      "bsonType": "timestamp",
+      "description": "签名请求防重放记录过期时间；网关定期清理"
+    }
+  },
+  "version": "1.0.0"
+}

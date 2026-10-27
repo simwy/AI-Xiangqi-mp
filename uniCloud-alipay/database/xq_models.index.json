@@ -1,0 +1,18 @@
+[
+  {
+    "IndexName": "enabled_sort",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "enabled",
+          "Direction": "1"
+        },
+        {
+          "Name": "sort_order",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  }
+]

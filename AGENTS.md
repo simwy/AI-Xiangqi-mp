@@ -10,15 +10,18 @@ This is a uni-app application based on uni-starter, with Vue 3 selected in `mani
 - `lang/` contains English and Simplified Chinese translations; `static/` stores images, icons, and fonts. Global styling lives in `uni.scss`.
 - `uni_modules/` contains bundled uni UI, authentication, and cloud modules, including module-specific cloud functions and database definitions. Keep module edits focused and explain them in PRs.
 - `uniCloud-alipay/` contains project-level cloud resources and a database JQL query.
+- `server/` contains the persistent match runner, HTTP/admin APIs, model adapters, archive handling, and Node tests. Shared rules live in `common/xiangqi/`.
 - `ui-preview/` contains the approved portrait UI prototype and its assets; it is separate from the uni-app entry point.
 
 ## Build, Test, and Development Commands
 
-- `npm ci`: install the locked npm dependencies, currently `qrcodejs2`.
-- Open the repository in HBuilderX. Use **Run** to launch the web target or a configured mini-program/device target.
-- Use HBuilderX **Publish** to build the intended release target; verify its settings in `manifest.json` first.
+- `npm ci`: install locked frontend and backend workspace dependencies.
+- `npm run setup`: create ignored local secrets and cloud gateway configuration without overwriting existing files.
+- `npm run server`: start the match/API service; `npm run dev:h5` starts the frontend with an API proxy.
+- `npm run build:h5`, `npm run build:mp-weixin`, `npm run build:mp-toutiao`: build each supported target. Mini programs require `VITE_API_BASE`.
+- `npm test`: run Node rule, persistence, adapter, and HTTP integration tests.
 
-`package.json` defines no development, build, lint, or test scripts. Do not assume `npm run build` or `npm test` works. Configure the associated uniCloud service before exercising cloud-backed features.
+Configure the associated uniCloud service before live mode. Demo mode uses isolated local persistence and never calls paid models. HBuilderX remains available for platform tooling and deployment.
 
 ## Coding Style & Naming Conventions
 
@@ -26,7 +29,7 @@ Match the surrounding file: application JavaScript and Vue files generally use t
 
 ## Testing Guidelines
 
-No automated test suite or coverage threshold is configured. Manually verify affected screens, navigation, authentication, and cloud calls in HBuilderX. Check each affected platform branch and localization changes. Include the target, steps, and results in the PR.
+Tests use `node:test` in `server/test/*.test.mjs`; no coverage threshold is configured. Preserve tests for legal moves, save-before-publish, recovery, version conflicts, imports and credential redaction. Verify affected UI and platform branches, and distinguish successful compilation from real-device or cloud verification.
 
 ## Commit & Pull Request Guidelines
 

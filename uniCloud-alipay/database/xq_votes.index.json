@@ -1,0 +1,14 @@
+[
+  {
+    "IndexName": "round_id",
+    "MgoKeySchema": {
+      "MgoIndexKeys": [
+        {
+          "Name": "round_id",
+          "Direction": "1"
+        }
+      ],
+      "MgoIsUnique": false
+    }
+  }
+]

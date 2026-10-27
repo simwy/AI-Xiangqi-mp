@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "title": "车卒残局示例",
+  "type": "endgame",
+  "status": "draft",
+  "version": 0,
+  "players": {
+    "red": {
+      "model_id": "doubao",
+      "display_name": "豆包"
+    },
+    "black": {
+      "model_id": "deepseek",
+      "display_name": "DeepSeek"
+    }
+  },
+  "initial_position": {
+    "fen": "4k4/9/9/9/4p4/9/9/9/R8/4K4 w - - 0 1",
+    "side_to_move": "red"
+  },
+  "current_fen": "4k4/9/9/9/4p4/9/9/9/R8/4K4 w - - 0 1",
+  "ply_count": 0,
+  "last_event_seq": 0,
+  "steps": [],
+  "calls": [],
+  "commentaries": [],
+  "events": [],
+  "result": {},
+  "source": {
+    "kind": "fen"
+  },
+  "archive": {
+    "mode": "inline"
+  }
+}

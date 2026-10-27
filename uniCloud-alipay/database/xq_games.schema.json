@@ -1,0 +1,1090 @@
+{
+  "bsonType": "object",
+  "description": "一局一条：普通对局、残局、导入和续弈共用完整 JSON 档案。",
+  "required": [
+    "schema_version",
+    "title",
+    "type",
+    "status",
+    "version",
+    "initial_position",
+    "current_fen",
+    "steps"
+  ],
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false,
+    "count": false
+  },
+  "properties": {
+    "_id": {
+      "bsonType": "string",
+      "description": "稳定文档 ID；由服务端生成或导入时重新分配"
+    },
+    "schema_version": {
+      "bsonType": "int",
+      "description": "导入导出文档格式版本",
+      "enum": [
+        1
+      ],
+      "defaultValue": 1
+    },
+    "title": {
+      "bsonType": "string",
+      "description": "棋局/残局名称",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "type": {
+      "bsonType": "string",
+      "description": "对局类型",
+      "enum": [
+        "standard",
+        "endgame",
+        "continuation"
+      ],
+      "defaultValue": "standard"
+    },
+    "status": {
+      "bsonType": "string",
+      "description": "棋局状态",
+      "enum": [
+        "draft",
+        "queued",
+        "playing",
+        "paused",
+        "finished",
+        "imported"
+      ],
+      "defaultValue": "draft"
+    },
+    "version": {
+      "bsonType": "int",
+      "description": "乐观并发控制版本；每次写入原子递增",
+      "minimum": 0,
+      "defaultValue": 0
+    },
+    "players": {
+      "bsonType": "object",
+      "description": "红黑双方身份快照",
+      "properties": {
+        "red": {
+          "bsonType": "object",
+          "description": "棋手身份及无密钥配置快照",
+          "properties": {
+            "model_id": {
+              "bsonType": "string",
+              "description": "模型配置 ID"
+            },
+            "display_name": {
+              "bsonType": "string",
+              "description": "本局使用的显示名称"
+            },
+            "avatar_url": {
+              "bsonType": "string",
+              "description": "本局使用的形象图"
+            },
+            "model_name": {
+              "bsonType": "string",
+              "description": "本局实际模型名"
+            },
+            "model_revision": {
+              "bsonType": "int",
+              "description": "配置版本",
+              "minimum": 0
+            },
+            "thinking_mode": {
+              "bsonType": "string",
+              "description": "开局时思考配置",
+              "enum": [
+                "default",
+                "enabled",
+                "disabled"
+              ]
+            },
+            "reasoning_effort": {
+              "bsonType": "string",
+              "description": "开局时思考强度"
+            }
+          },
+          "required": [
+            "model_id",
+            "display_name"
+          ]
+        },
+        "black": {
+          "bsonType": "object",
+          "description": "棋手身份及无密钥配置快照",
+          "properties": {
+            "model_id": {
+              "bsonType": "string",
+              "description": "模型配置 ID"
+            },
+            "display_name": {
+              "bsonType": "string",
+              "description": "本局使用的显示名称"
+            },
+            "avatar_url": {
+              "bsonType": "string",
+              "description": "本局使用的形象图"
+            },
+            "model_name": {
+              "bsonType": "string",
+              "description": "本局实际模型名"
+            },
+            "model_revision": {
+              "bsonType": "int",
+              "description": "配置版本",
+              "minimum": 0
+            },
+            "thinking_mode": {
+              "bsonType": "string",
+              "description": "开局时思考配置",
+              "enum": [
+                "default",
+                "enabled",
+                "disabled"
+              ]
+            },
+            "reasoning_effort": {
+              "bsonType": "string",
+              "description": "开局时思考强度"
+            }
+          },
+          "required": [
+            "model_id",
+            "display_name"
+          ]
+        }
+      },
+      "required": [
+        "red",
+        "black"
+      ]
+    },
+    "initial_position": {
+      "bsonType": "object",
+      "description": "所有回放和规则判断的起点",
+      "properties": {
+        "fen": {
+          "bsonType": "string",
+          "description": "初始完整 FEN；导入时逐项校验"
+        },
+        "side_to_move": {
+          "bsonType": "string",
+          "description": "初始先走方，必须与 FEN 一致",
+          "enum": [
+            "red",
+            "black"
+          ]
+        }
+      },
+      "required": [
+        "fen",
+        "side_to_move"
+      ]
+    },
+    "current_fen": {
+      "bsonType": "string",
+      "description": "当前局面，与初始局面及已提交 steps 必须一致"
+    },
+    "ply_count": {
+      "bsonType": "int",
+      "description": "已提交的半回合数",
+      "minimum": 0,
+      "defaultValue": 0
+    },
+    "last_event_seq": {
+      "bsonType": "int",
+      "description": "已提交的最后事件序号",
+      "minimum": 0,
+      "defaultValue": 0
+    },
+    "steps": {
+      "bsonType": "array",
+      "description": "完整逐步档案；一局不拆成多条步骤记录",
+      "items": {
+        "bsonType": "object",
+        "description": "一次已提交的合法落子及完整附属档案",
+        "properties": {
+          "seq": {
+            "bsonType": "int",
+            "description": "从 1 开始的半回合序号",
+            "minimum": 1
+          },
+          "side": {
+            "bsonType": "string",
+            "description": "走方",
+            "enum": [
+              "red",
+              "black"
+            ]
+          },
+          "move": {
+            "bsonType": "object",
+            "description": "起终点与棋子",
+            "properties": {
+              "piece_id": {
+                "bsonType": "string",
+                "description": "棋子稳定 ID"
+              },
+              "from": {
+                "bsonType": "array",
+                "description": "棋盘坐标 [x,y]，x 为 0..8，y 为 0..9；服务端进一步校验",
+                "items": {
+                  "bsonType": "int",
+                  "description": "坐标整数",
+                  "minimum": 0,
+                  "maximum": 9
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "to": {
+                "bsonType": "array",
+                "description": "棋盘坐标 [x,y]，x 为 0..8，y 为 0..9；服务端进一步校验",
+                "items": {
+                  "bsonType": "int",
+                  "description": "坐标整数",
+                  "minimum": 0,
+                  "maximum": 9
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "captured_piece_id": {
+                "bsonType": "string",
+                "description": "被吃棋子 ID；未吃子省略"
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ]
+          },
+          "notation": {
+            "bsonType": "string",
+            "description": "规范中文着法"
+          },
+          "fen_before": {
+            "bsonType": "string",
+            "description": "落子前完整 FEN"
+          },
+          "fen_after": {
+            "bsonType": "string",
+            "description": "落子后完整 FEN"
+          },
+          "committed_at": {
+            "bsonType": "timestamp",
+            "description": "服务端确认落子 UTC 毫秒"
+          },
+          "decision_ms": {
+            "bsonType": "int",
+            "description": "含重试的总决策耗时，不含解说及语音生成",
+            "minimum": 0
+          },
+          "validation_ms": {
+            "bsonType": "int",
+            "description": "规则校验耗时",
+            "minimum": 0
+          },
+          "calls": {
+            "bsonType": "array",
+            "description": "本步所有模型调用与重试记录",
+            "items": {
+              "bsonType": "object",
+              "description": "一次模型请求；失败、重试及中断均保留；禁止包含 Key 和私有推理全文",
+              "properties": {
+                "id": {
+                  "bsonType": "string",
+                  "description": "调用唯一标识"
+                },
+                "purpose": {
+                  "bsonType": "string",
+                  "description": "请求用途",
+                  "enum": [
+                    "move",
+                    "commentary",
+                    "summary"
+                  ]
+                },
+                "attempt": {
+                  "bsonType": "int",
+                  "description": "从 1 开始的尝试号",
+                  "minimum": 1
+                },
+                "model_id": {
+                  "bsonType": "string",
+                  "description": "模型表 ID"
+                },
+                "model_revision": {
+                  "bsonType": "int",
+                  "description": "开始请求时的模型配置版本",
+                  "minimum": 0
+                },
+                "thinking_mode": {
+                  "bsonType": "string",
+                  "description": "本次实际使用的思考模式",
+                  "enum": [
+                    "default",
+                    "enabled",
+                    "disabled"
+                  ]
+                },
+                "reasoning_effort": {
+                  "bsonType": "string",
+                  "description": "本次传给供应商的思考强度；未设置则省略"
+                },
+                "started_at": {
+                  "bsonType": "timestamp",
+                  "description": "请求开始 UTC 毫秒"
+                },
+                "finished_at": {
+                  "bsonType": "timestamp",
+                  "description": "请求结束 UTC 毫秒；未完成则省略"
+                },
+                "duration_ms": {
+                  "bsonType": "int",
+                  "description": "服务端实测请求耗时；未完成则省略",
+                  "minimum": 0
+                },
+                "status": {
+                  "bsonType": "string",
+                  "description": "请求状态",
+                  "enum": [
+                    "running",
+                    "succeeded",
+                    "failed",
+                    "interrupted"
+                  ]
+                },
+                "provider_request_id": {
+                  "bsonType": "string",
+                  "description": "供应商请求标识"
+                },
+                "usage": {
+                  "bsonType": "object",
+                  "description": "供应商实际返回的 Token 用量；未返回的字段省略"
+                },
+                "error": {
+                  "bsonType": "object",
+                  "description": "脱敏错误类别与简短说明"
+                },
+                "final_output": {
+                  "bsonType": "string",
+                  "description": "可选脱敏最终回答；不包含完整推理"
+                }
+              },
+              "required": [
+                "id",
+                "purpose",
+                "attempt",
+                "model_id",
+                "started_at",
+                "status"
+              ]
+            }
+          },
+          "commentaries": {
+            "bsonType": "array",
+            "description": "本步全部报招、分析及语音记录",
+            "items": {
+              "bsonType": "object",
+              "description": "一条报招或解说；修订保存新版本",
+              "properties": {
+                "id": {
+                  "bsonType": "string",
+                  "description": "解说唯一标识"
+                },
+                "type": {
+                  "bsonType": "string",
+                  "description": "解说类别",
+                  "enum": [
+                    "opening",
+                    "move",
+                    "analysis",
+                    "check",
+                    "checkmate",
+                    "pause",
+                    "error",
+                    "summary"
+                  ]
+                },
+                "revision": {
+                  "bsonType": "int",
+                  "description": "版本号",
+                  "minimum": 1
+                },
+                "text": {
+                  "bsonType": "string",
+                  "description": "解说或报招完整文本"
+                },
+                "status": {
+                  "bsonType": "string",
+                  "description": "文本生成状态",
+                  "enum": [
+                    "pending",
+                    "ready",
+                    "failed"
+                  ]
+                },
+                "created_at": {
+                  "bsonType": "timestamp",
+                  "description": "生成时间 UTC 毫秒"
+                },
+                "generation_ms": {
+                  "bsonType": "int",
+                  "description": "文本生成耗时",
+                  "minimum": 0
+                },
+                "model_call_id": {
+                  "bsonType": "string",
+                  "description": "关联本步或整局 calls 内的调用 ID"
+                },
+                "is_fallback": {
+                  "bsonType": "bool",
+                  "description": "是否由规则模板降级生成"
+                },
+                "selected_for_live": {
+                  "bsonType": "bool",
+                  "description": "是否被直播选用"
+                },
+                "audio": {
+                  "bsonType": "array",
+                  "description": "此版本对应的语音原文件记录",
+                  "items": {
+                    "bsonType": "object",
+                    "description": "语音原文件及播放信息；文件存云存储，不存 Base64",
+                    "properties": {
+                      "id": {
+                        "bsonType": "string",
+                        "description": "音频唯一标识"
+                      },
+                      "status": {
+                        "bsonType": "string",
+                        "description": "音频归档状态",
+                        "enum": [
+                          "pending",
+                          "synthesizing",
+                          "uploading",
+                          "ready",
+                          "failed"
+                        ]
+                      },
+                      "file_id": {
+                        "bsonType": "string",
+                        "description": "持久化云存储 fileID；不使用临时 URL 作为唯一索引"
+                      },
+                      "format": {
+                        "bsonType": "string",
+                        "description": "文件格式",
+                        "enum": [
+                          "mp3",
+                          "wav",
+                          "ogg",
+                          "m4a",
+                          "aac",
+                          "pcm"
+                        ]
+                      },
+                      "duration_ms": {
+                        "bsonType": "int",
+                        "description": "实际音频时长",
+                        "minimum": 0
+                      },
+                      "size_bytes": {
+                        "bsonType": "int",
+                        "description": "原文件字节数",
+                        "minimum": 0
+                      },
+                      "sha256": {
+                        "bsonType": "string",
+                        "description": "原文件 SHA-256"
+                      },
+                      "voice_id": {
+                        "bsonType": "string",
+                        "description": "实际音色 ID"
+                      },
+                      "tts_model": {
+                        "bsonType": "string",
+                        "description": "实际语音模型或资源类型"
+                      },
+                      "generation_ms": {
+                        "bsonType": "int",
+                        "description": "语音合成耗时",
+                        "minimum": 0
+                      },
+                      "upload_ms": {
+                        "bsonType": "int",
+                        "description": "归档上传耗时",
+                        "minimum": 0
+                      },
+                      "created_at": {
+                        "bsonType": "timestamp",
+                        "description": "生成时间 UTC 毫秒"
+                      },
+                      "playback_offset_ms": {
+                        "bsonType": "int",
+                        "description": "局内播放计划偏移",
+                        "minimum": 0
+                      },
+                      "played_in_live": {
+                        "bsonType": "bool",
+                        "description": "是否被直播时间线选用"
+                      },
+                      "error": {
+                        "bsonType": "object",
+                        "description": "合成或上传失败的脱敏信息"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "status"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "type",
+                "revision",
+                "status"
+              ]
+            }
+          },
+          "events": {
+            "bsonType": "array",
+            "description": "本步演出事件；序号在整局范围唯一",
+            "items": {
+              "bsonType": "object",
+              "description": "可重建直播演出顺序的事件",
+              "properties": {
+                "id": {
+                  "bsonType": "string",
+                  "description": "幂等事件 ID"
+                },
+                "seq": {
+                  "bsonType": "int",
+                  "description": "局内连续事件序号",
+                  "minimum": 1
+                },
+                "type": {
+                  "bsonType": "string",
+                  "description": "事件类型",
+                  "enum": [
+                    "thinking_started",
+                    "thinking_finished",
+                    "move",
+                    "capture",
+                    "check",
+                    "checkmate",
+                    "commentary",
+                    "audio",
+                    "pause",
+                    "resume",
+                    "finished",
+                    "error"
+                  ]
+                },
+                "offset_ms": {
+                  "bsonType": "int",
+                  "description": "相对本局开始的计划偏移",
+                  "minimum": 0
+                },
+                "occurred_at": {
+                  "bsonType": "timestamp",
+                  "description": "服务端记录时间 UTC 毫秒"
+                },
+                "step_seq": {
+                  "bsonType": "int",
+                  "description": "关联半回合号；开场等事件省略",
+                  "minimum": 1
+                },
+                "data": {
+                  "bsonType": "object",
+                  "description": "关联解说/音频 ID、原声版本及特效参数；不含密钥"
+                }
+              },
+              "required": [
+                "id",
+                "seq",
+                "type",
+                "offset_ms"
+              ]
+            }
+          },
+          "outcome": {
+            "bsonType": "object",
+            "description": "将军/将死/和棋等规则判定"
+          }
+        },
+        "required": [
+          "seq",
+          "side",
+          "move",
+          "notation",
+          "fen_before",
+          "fen_after",
+          "committed_at"
+        ]
+      },
+      "defaultValue": []
+    },
+    "calls": {
+      "bsonType": "array",
+      "description": "开场、总结等不属于某步的模型调用",
+      "items": {
+        "bsonType": "object",
+        "description": "一次模型请求；失败、重试及中断均保留；禁止包含 Key 和私有推理全文",
+        "properties": {
+          "id": {
+            "bsonType": "string",
+            "description": "调用唯一标识"
+          },
+          "purpose": {
+            "bsonType": "string",
+            "description": "请求用途",
+            "enum": [
+              "move",
+              "commentary",
+              "summary"
+            ]
+          },
+          "attempt": {
+            "bsonType": "int",
+            "description": "从 1 开始的尝试号",
+            "minimum": 1
+          },
+          "model_id": {
+            "bsonType": "string",
+            "description": "模型表 ID"
+          },
+          "model_revision": {
+            "bsonType": "int",
+            "description": "开始请求时的模型配置版本",
+            "minimum": 0
+          },
+          "thinking_mode": {
+            "bsonType": "string",
+            "description": "本次实际使用的思考模式",
+            "enum": [
+              "default",
+              "enabled",
+              "disabled"
+            ]
+          },
+          "reasoning_effort": {
+            "bsonType": "string",
+            "description": "本次传给供应商的思考强度；未设置则省略"
+          },
+          "started_at": {
+            "bsonType": "timestamp",
+            "description": "请求开始 UTC 毫秒"
+          },
+          "finished_at": {
+            "bsonType": "timestamp",
+            "description": "请求结束 UTC 毫秒；未完成则省略"
+          },
+          "duration_ms": {
+            "bsonType": "int",
+            "description": "服务端实测请求耗时；未完成则省略",
+            "minimum": 0
+          },
+          "status": {
+            "bsonType": "string",
+            "description": "请求状态",
+            "enum": [
+              "running",
+              "succeeded",
+              "failed",
+              "interrupted"
+            ]
+          },
+          "provider_request_id": {
+            "bsonType": "string",
+            "description": "供应商请求标识"
+          },
+          "usage": {
+            "bsonType": "object",
+            "description": "供应商实际返回的 Token 用量；未返回的字段省略"
+          },
+          "error": {
+            "bsonType": "object",
+            "description": "脱敏错误类别与简短说明"
+          },
+          "final_output": {
+            "bsonType": "string",
+            "description": "可选脱敏最终回答；不包含完整推理"
+          }
+        },
+        "required": [
+          "id",
+          "purpose",
+          "attempt",
+          "model_id",
+          "started_at",
+          "status"
+        ]
+      },
+      "defaultValue": []
+    },
+    "commentaries": {
+      "bsonType": "array",
+      "description": "开场、暂停、总结等整局解说及语音",
+      "items": {
+        "bsonType": "object",
+        "description": "一条报招或解说；修订保存新版本",
+        "properties": {
+          "id": {
+            "bsonType": "string",
+            "description": "解说唯一标识"
+          },
+          "type": {
+            "bsonType": "string",
+            "description": "解说类别",
+            "enum": [
+              "opening",
+              "move",
+              "analysis",
+              "check",
+              "checkmate",
+              "pause",
+              "error",
+              "summary"
+            ]
+          },
+          "revision": {
+            "bsonType": "int",
+            "description": "版本号",
+            "minimum": 1
+          },
+          "text": {
+            "bsonType": "string",
+            "description": "解说或报招完整文本"
+          },
+          "status": {
+            "bsonType": "string",
+            "description": "文本生成状态",
+            "enum": [
+              "pending",
+              "ready",
+              "failed"
+            ]
+          },
+          "created_at": {
+            "bsonType": "timestamp",
+            "description": "生成时间 UTC 毫秒"
+          },
+          "generation_ms": {
+            "bsonType": "int",
+            "description": "文本生成耗时",
+            "minimum": 0
+          },
+          "model_call_id": {
+            "bsonType": "string",
+            "description": "关联本步或整局 calls 内的调用 ID"
+          },
+          "is_fallback": {
+            "bsonType": "bool",
+            "description": "是否由规则模板降级生成"
+          },
+          "selected_for_live": {
+            "bsonType": "bool",
+            "description": "是否被直播选用"
+          },
+          "audio": {
+            "bsonType": "array",
+            "description": "此版本对应的语音原文件记录",
+            "items": {
+              "bsonType": "object",
+              "description": "语音原文件及播放信息；文件存云存储，不存 Base64",
+              "properties": {
+                "id": {
+                  "bsonType": "string",
+                  "description": "音频唯一标识"
+                },
+                "status": {
+                  "bsonType": "string",
+                  "description": "音频归档状态",
+                  "enum": [
+                    "pending",
+                    "synthesizing",
+                    "uploading",
+                    "ready",
+                    "failed"
+                  ]
+                },
+                "file_id": {
+                  "bsonType": "string",
+                  "description": "持久化云存储 fileID；不使用临时 URL 作为唯一索引"
+                },
+                "format": {
+                  "bsonType": "string",
+                  "description": "文件格式",
+                  "enum": [
+                    "mp3",
+                    "wav",
+                    "ogg",
+                    "m4a",
+                    "aac",
+                    "pcm"
+                  ]
+                },
+                "duration_ms": {
+                  "bsonType": "int",
+                  "description": "实际音频时长",
+                  "minimum": 0
+                },
+                "size_bytes": {
+                  "bsonType": "int",
+                  "description": "原文件字节数",
+                  "minimum": 0
+                },
+                "sha256": {
+                  "bsonType": "string",
+                  "description": "原文件 SHA-256"
+                },
+                "voice_id": {
+                  "bsonType": "string",
+                  "description": "实际音色 ID"
+                },
+                "tts_model": {
+                  "bsonType": "string",
+                  "description": "实际语音模型或资源类型"
+                },
+                "generation_ms": {
+                  "bsonType": "int",
+                  "description": "语音合成耗时",
+                  "minimum": 0
+                },
+                "upload_ms": {
+                  "bsonType": "int",
+                  "description": "归档上传耗时",
+                  "minimum": 0
+                },
+                "created_at": {
+                  "bsonType": "timestamp",
+                  "description": "生成时间 UTC 毫秒"
+                },
+                "playback_offset_ms": {
+                  "bsonType": "int",
+                  "description": "局内播放计划偏移",
+                  "minimum": 0
+                },
+                "played_in_live": {
+                  "bsonType": "bool",
+                  "description": "是否被直播时间线选用"
+                },
+                "error": {
+                  "bsonType": "object",
+                  "description": "合成或上传失败的脱敏信息"
+                }
+              },
+              "required": [
+                "id",
+                "status"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "revision",
+          "status"
+        ]
+      },
+      "defaultValue": []
+    },
+    "events": {
+      "bsonType": "array",
+      "description": "非某步的事件；与 steps[].events 按 seq 合并为时间线",
+      "items": {
+        "bsonType": "object",
+        "description": "可重建直播演出顺序的事件",
+        "properties": {
+          "id": {
+            "bsonType": "string",
+            "description": "幂等事件 ID"
+          },
+          "seq": {
+            "bsonType": "int",
+            "description": "局内连续事件序号",
+            "minimum": 1
+          },
+          "type": {
+            "bsonType": "string",
+            "description": "事件类型",
+            "enum": [
+              "thinking_started",
+              "thinking_finished",
+              "move",
+              "capture",
+              "check",
+              "checkmate",
+              "commentary",
+              "audio",
+              "pause",
+              "resume",
+              "finished",
+              "error"
+            ]
+          },
+          "offset_ms": {
+            "bsonType": "int",
+            "description": "相对本局开始的计划偏移",
+            "minimum": 0
+          },
+          "occurred_at": {
+            "bsonType": "timestamp",
+            "description": "服务端记录时间 UTC 毫秒"
+          },
+          "step_seq": {
+            "bsonType": "int",
+            "description": "关联半回合号；开场等事件省略",
+            "minimum": 1
+          },
+          "data": {
+            "bsonType": "object",
+            "description": "关联解说/音频 ID、原声版本及特效参数；不含密钥"
+          }
+        },
+        "required": [
+          "id",
+          "seq",
+          "type",
+          "offset_ms"
+        ]
+      },
+      "defaultValue": []
+    },
+    "pending_step": {
+      "bsonType": "object",
+      "description": "正在执行的步骤及 calls；成功后原子移入 steps，重启保留中断记录"
+    },
+    "rules": {
+      "bsonType": "object",
+      "description": "规则名称、版本、重复局面及无吃子阈值"
+    },
+    "source": {
+      "bsonType": "object",
+      "description": "导入与续弈来源",
+      "properties": {
+        "kind": {
+          "bsonType": "string",
+          "description": "来源方式",
+          "enum": [
+            "new",
+            "manual",
+            "fen",
+            "json",
+            "continuation"
+          ]
+        },
+        "source_game_id": {
+          "bsonType": "string",
+          "description": "续弈来源棋局 ID；保留原局不修改"
+        },
+        "source_step_seq": {
+          "bsonType": "int",
+          "description": "从来源局第几步后续弈；0 为初始局面",
+          "minimum": 0
+        },
+        "original_id": {
+          "bsonType": "string",
+          "description": "导入前的原始 ID，不直接作为本库 _id"
+        },
+        "imported_at": {
+          "bsonType": "timestamp",
+          "description": "导入 UTC 毫秒"
+        },
+        "description": {
+          "bsonType": "string",
+          "description": "来源说明"
+        }
+      }
+    },
+    "result": {
+      "bsonType": "object",
+      "description": "结束结果；未结束时为空对象",
+      "properties": {
+        "winner": {
+          "bsonType": "string",
+          "description": "获胜方或和棋",
+          "enum": [
+            "red",
+            "black",
+            "draw"
+          ]
+        },
+        "reason": {
+          "bsonType": "string",
+          "description": "将死/无合法着法/超时/和棋等原因"
+        }
+      }
+    },
+    "archive": {
+      "bsonType": "object",
+      "description": "大文档兜底及下载元信息",
+      "properties": {
+        "mode": {
+          "bsonType": "string",
+          "description": "正常内联；超大文档以完整 JSON 原文件为权威档案",
+          "enum": [
+            "inline",
+            "file"
+          ],
+          "defaultValue": "inline"
+        },
+        "file_id": {
+          "bsonType": "string",
+          "description": "file 模式的完整 JSON 云存储 fileID"
+        },
+        "sha256": {
+          "bsonType": "string",
+          "description": "JSON 原文件摘要"
+        },
+        "size_bytes": {
+          "bsonType": "int",
+          "description": "实际归档体积",
+          "minimum": 0
+        },
+        "version": {
+          "bsonType": "int",
+          "description": "外置归档对应的棋局版本",
+          "minimum": 0
+        },
+        "encoding": {
+          "bsonType": "string",
+          "enum": [
+            "gzip"
+          ],
+          "description": "大档案 JSON 压缩编码"
+        }
+      }
+    },
+    "export": {
+      "bsonType": "object",
+      "description": "最近一次后台导出任务、截止事件序号、状态及 ZIP fileID"
+    },
+    "created_at": {
+      "bsonType": "timestamp",
+      "description": "创建 UTC 毫秒"
+    },
+    "started_at": {
+      "bsonType": "timestamp",
+      "description": "开局 UTC 毫秒"
+    },
+    "finished_at": {
+      "bsonType": "timestamp",
+      "description": "结束 UTC 毫秒"
+    },
+    "updated_at": {
+      "bsonType": "timestamp",
+      "description": "修改 UTC 毫秒"
+    }
+  },
+  "version": "1.0.0"
+}

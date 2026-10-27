@@ -1,0 +1,15 @@
+.git
+node_modules
+server/node_modules
+server/data
+.superpowers
+.hbuilderx
+dist
+unpackage
+.env
+.env.*
+server/.env
+server/.env.*
+*.log
+uniCloud-alipay/cloudfunctions/common/xiangqi-config/config.json
+uni_modules/uni-config-center/uniCloud/cloudfunctions/common/uni-config-center/xiangqi/config.json
