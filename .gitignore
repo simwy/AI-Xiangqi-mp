@@ -1,0 +1,10 @@
+node_modules/
+unpackage/
+dist/
+.superpowers/
+.hbuilderx/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
